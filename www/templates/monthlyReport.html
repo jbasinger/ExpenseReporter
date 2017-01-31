@@ -1,0 +1,42 @@
+<ion-view view-title="{{monthName}} Report">
+  <ion-nav-buttons side="right">
+    <button class="button icon ion-plus-round" ng-click="addExpense()"></button>
+  </ion-nav-buttons>
+  <ion-content>
+
+    <div class="card" style="text-align: center;" ng-if="!fileNotFound && mileageExpenses.length == 0">
+      <h2>You have no expenses for {{monthName}}<h2>
+    </div>
+
+    <div class="card" style="text-align: center;" ng-if="fileNotFound">
+      <h2>We can't find your expense report file for {{monthName}}<h2>
+      <h3>Want us to make one for you from our template?<h3>
+      <button class="button button-block button-positive" ng-click="createReport()">
+        Create {{monthName}} Report
+      </button>
+    </div>
+
+    <div class="list card" ng-if="mileageExpenses.length > 0">
+
+      <div class="item item-divider">
+        Mileage Expenses
+      </div>
+      <div class="item item-text-wrap" style="padding-left: 80px;" ng-repeat="item in mileageExpenses">
+        <div class="dayOfMonth">
+          {{item.getDayOfMonth()}}
+        </div>
+        <h2>{{item.miles}} miles for {{item.customer}}</h2>
+        <p>{{item.place}}</p>
+        <div class="money">${{item.dollars}}</div>
+      </div>
+      <div class="item item-divider">
+        Totals: {{mileageTotal()}} miles
+        <div class="header-total">
+          ${{dollarTotal()}}
+        </div>
+      </div>
+
+    </div>
+
+  </ion-content
+</ion-view>

@@ -1,0 +1,25 @@
+<ion-view view-title="Quick Expenses">
+  <ion-nav-buttons side="right">
+    <button class="button icon ion-plus-round" ng-click="addQuickExpense()"></button>
+  </ion-nav-buttons>
+  <ion-content>
+
+    <div class="card" style="text-align: center;" ng-if="quick.mileageExpenses.length == 0">
+      <h2>You have no quick expenses<h2>
+    </div>
+
+    <div class="list card" ng-if="quick.mileageExpenses.length > 0">
+
+      <div class="item item-divider">
+        Quick Mileage Expenses
+      </div>
+      <div class="item item-text-wrap item-icon item-icon-right" ng-repeat="item in quick.mileageExpenses">
+        <h2>{{item.miles}} miles for {{item.customer}}</h2>
+        <p>{{item.place}}</p>
+        <i class="icon ion-edit" style="padding-right: 45px;" ng-click="editMileageExpense($index)"></i>
+        <i class="icon ion-trash-b" ng-click="deleteMileageExpense($index)"></i>
+      </div>
+    </div>
+
+  </ion-content
+</ion-view>

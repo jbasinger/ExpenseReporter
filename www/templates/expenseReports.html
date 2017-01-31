@@ -1,0 +1,10 @@
+<ion-view view-title="Expense Reports">
+  <ion-content>
+    <div class="list list-inset">
+      <div class="item item-icon-right" ng-repeat="month in months" ng-click="goToMonth($index)">
+        {{month}}
+        <i class="icon ion-chevron-right"></i>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
