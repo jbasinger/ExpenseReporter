@@ -1,30 +1,67 @@
 angular.module('app.controllers')
 .controller('QuickExpensesCtrl', function($scope, QuickExpenses, $ionicActionSheet, $ionicModal, $ionicPopup) {
 
-  $scope.quick = QuickExpenses.getQuickExpenses();
+  $scope.fileNotFound = false;
+  $scope.quick = {
+    mileageExpenses: []
+  };
 
   $scope.mileageExpense = {};
   $scope.isNewMileageExpense = false;
+
+  function loadUp(){
+    QuickExpenses.getQuickExpenses().then(function(expenses){
+      $scope.quick.mileageExpenses = expenses;
+    }, function(err){
+      if(err == QuickExpenses.ERROR.FILE_NOT_FOUND){
+        $scope.fileNotFound = true;
+      }
+    });
+  };
+
+  loadUp();
+
+  $scope.getMileageExpenses = function(){
+    return _.filter($scope.quick.mileageExpenses, function(i){
+      return !i.deleteMe;
+    });
+  }
+
+  $scope.createQuickExpenseSheet = function(){
+    QuickExpenses.createQuickExpenseSheet().then(function(){
+      loadUp();
+    },function(err){
+      console.log(err);
+    });
+  }
 
   $scope.saveMileageExpense = function(expense, isNew){
     if(isNew){
       $scope.quick.mileageExpenses.push(expense);
     }
-    QuickExpenses.saveQuickExpenses($scope.quick);
-    $scope.mileageExpenseModal.hide();
+    QuickExpenses.saveQuickExpenses($scope.quick).then(function(){
+      $scope.mileageExpenseModal.hide();
+    }, function(err){
+      console.log(err);
+      $scope.mileageExpenseModal.hide();
+    });
+
   }
 
   $scope.deleteMileageExpense = function(index){
     var confirmPopup = $ionicPopup.confirm({
-     title: 'Delete Mileage Expense',
-     template: 'Are you sure you want to delete this?'
-   });
+      title: 'Delete Mileage Expense',
+      template: 'Are you sure you want to delete this?'
+    });
 
-   confirmPopup.then(function(res) {
-     if(res) {
-       $scope.quick.mileageExpenses.splice(index,1);
-     }
-   });
+    confirmPopup.then(function(res) {
+      if(res) {
+        $scope.quick.mileageExpenses[index].deleteMe = true;
+        QuickExpenses.saveQuickExpenses($scope.quick).then(function(){
+          loadUp();
+        }, console.log)
+      }
+    });
   }
 
   $scope.editMileageExpense = function(index){

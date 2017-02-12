@@ -12,7 +12,7 @@ function MileageExpense(values){
   this.miles=values[5];
   //values[6] is always blank
   this.dollars=parseFloat(values[7]).toFixed(2);
-
+  this.deleteMe=false;
 }
 
 MileageExpense.prototype.getDateWithFormat = function(format){
