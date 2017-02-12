@@ -40,39 +40,42 @@ angular.module('app.controllers')
 
   $scope.addExpense = function(){
 
-    var quicks = QuickExpenses.getQuickExpenses();
+    QuickExpenses.getQuickExpenses().then(function(quickExpenses){
+      
+      var quicks = { mileageExpenses: quickExpenses };
+      var buttons = [];
 
-    var buttons = [];
+      _.each(quicks.mileageExpenses, function(item){
+        buttons.push({text: item.customer + ' ' + item.miles + ' miles'});
+      });
 
-    _.each(quicks.mileageExpenses, function(item){
-      buttons.push({text: item.customer + ' ' + item.miles + ' miles'});
-    });
+      $ionicActionSheet.show({
+        buttons: buttons,
+        titleText: 'Add a Quick Expense',
+        cancelText: 'Cancel',
+        cancel: function() {
+            // add cancel code..
+        },
+        buttonClicked: function(index) {
+          var quickExpense = quicks.mileageExpenses[index];
 
-    $ionicActionSheet.show({
-      buttons: buttons,
-      titleText: 'Add a Quick Expense',
-      cancelText: 'Cancel',
-      cancel: function() {
-          // add cancel code..
-      },
-      buttonClicked: function(index) {
-        var quickExpense = quicks.mileageExpenses[index];
+          var mileage = new MileageExpense();
 
-        var mileage = new MileageExpense();
+          mileage.date = moment().format("L");
+          mileage.place = quickExpense.place;
+          mileage.customer = quickExpense.customer;
+          mileage.miles = quickExpense.miles;
 
-        mileage.date = moment().format("L");
-        mileage.place = quickExpense.place;
-        mileage.customer = quickExpense.customer;
-        mileage.miles = quickExpense.miles;
+          $scope.mileageExpenses.push(mileage);
 
-        $scope.mileageExpenses.push(mileage);
+          Expenses.saveMileageExpensesByMonth($scope.mileageExpenses, month).then(function(){
+            loadMileageForMonth(month);
+          });
+          return true;
+        }
+      });
+    },console.log);
 
-        Expenses.saveMileageExpensesByMonth($scope.mileageExpenses, month).then(function(){
-          loadMileageForMonth(month);
-        });
-        return true;
-      }
-    });
   }
 
   loadMileageForMonth(month);
